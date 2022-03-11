@@ -11,7 +11,7 @@ export enum LispType {
 export const lisp_COMMON_LISP = "common_lisp";
 export const lisp_SCHEME = "scheme";
 export const lisp_dialect = lisp_SCHEME;
-// var lisp_dialect = lisp_COMMON_LISP;
+// const lisp_dialect = lisp_COMMON_LISP;
 
 export default class LispCell {
   type: LispType;
@@ -83,15 +83,15 @@ export default class LispCell {
       if (lisp_dialect === lisp_SCHEME) {
         // (set! var exp)
         if (this.list[0].val === "set!") {
-          var localEnv = env.findVar(this.list[1].val);
-          var result = this.list[2].eval(env);
+          const localEnv = env.findVar(this.list[1].val);
+          const result = this.list[2].eval(env);
           localEnv.setVar(this.list[1].val, result);
           return result;
         }
 
         // (define var exp)
         if (this.list[0].val === "define") {
-          var result = this.list[2].eval(env);
+          const result = this.list[2].eval(env);
           // console.log("Defining: " + this.list[1].val);
           env.setVar(this.list[1].val, result);
           return result;
@@ -99,7 +99,7 @@ export default class LispCell {
 
         // (begin exp*)
         if (this.list[0].val == "begin") {
-          for (var i = 1; i < this.list.length - 1; ++i) {
+          for (let i = 1; i < this.list.length - 1; ++i) {
             this.list[i].eval(env);
           }
           return this.list[this.list.length - 1].eval(env);
@@ -107,7 +107,7 @@ export default class LispCell {
       } else if (lisp_dialect === lisp_COMMON_LISP) {
         // (setq var exp)
         if (this.list[0].val === "setq") {
-          var localEnv = env.findVar(this.list[1].val);
+          const localEnv = env.findVar(this.list[1].val);
           localEnv.setVar(this.list[1].val, this.list[2].eval(env));
         }
 
@@ -133,7 +133,7 @@ export default class LispCell {
 
         // (progn exp*)
         if (this.list[0].val == "progn") {
-          for (var i = 1; i < this.list.length - 1; ++i) {
+          for (let i = 1; i < this.list.length - 1; ++i) {
             this.list[i].eval(env);
           }
           return this.list[this.list.length - 1].eval(env);
@@ -158,7 +158,7 @@ export default class LispCell {
     }
     const exps = [];
 
-    for (var i = 1; i < this.list.length; ++i) {
+    for (let i = 1; i < this.list.length; ++i) {
       exps.push(this.list[i].eval(env));
     }
     if (proc.type == LispType.Lambda) {
