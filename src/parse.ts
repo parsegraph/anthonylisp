@@ -1,5 +1,5 @@
 import LispCell, { LispType } from "./LispCell";
-import LispAtom from "./LispAtom";
+import lispAtom from "./lispAtom";
 
 /**
  * Convert given string to list of tokens.
@@ -36,8 +36,8 @@ export function tokenize(str: string): string[] {
     // A string.
     if (c === '"') {
       ++i;
-      var start = i;
-      var count = 0;
+      const start = i;
+      let count = 0;
       c = str.charAt(i);
       while (c != '"') {
         ++count;
@@ -50,8 +50,8 @@ export function tokenize(str: string): string[] {
     }
 
     // A symbol or procedure name.
-    var start = i;
-    var count = 0;
+    const start = i;
+    let count = 0;
     while (
       i < str.length &&
       c !== " " &&
@@ -96,7 +96,7 @@ export function parseTokens(tokens: string[]): LispCell {
     tokens.shift();
     return c;
   } else {
-    return LispAtom(token);
+    return lispAtom(token);
   }
 }
 

@@ -6,7 +6,7 @@ function isdig(c: string): boolean {
 }
 
 // numbers become Numbers; every other token is a Symbol
-export default function LispAtom(token: string) {
+export default function lispAtom(token: string) {
   // console.log("Making atom for " + token);
   if (
     isdig(token[0]) ||
