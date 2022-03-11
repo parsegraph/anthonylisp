@@ -4,7 +4,7 @@ SCRIPT_FILES = \
 	src/parse.ts \
 	src/LispEnvironment.ts \
 	src/index.ts \
-	src/LispAtom.ts \
+	src/lispAtom.ts \
 	src/LispCell.ts \
 	src/LispRuntime.ts \
 	src/demo.ts \
