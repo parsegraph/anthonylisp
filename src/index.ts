@@ -1,10 +1,10 @@
 import parse, { parseTokens, tokenize } from "./parse";
 import LispCell, { LispType } from "./LispCell";
 import LispEnvironment from "./LispEnvironment";
-import LispAtom from "./LispAtom";
+import lispAtom from "./lispAtom";
 
 export default parse;
-export { parseTokens, tokenize, LispCell, LispEnvironment, LispAtom, LispType };
+export { parseTokens, tokenize, LispCell, LispEnvironment, lispAtom, LispType };
 
 /*
 
