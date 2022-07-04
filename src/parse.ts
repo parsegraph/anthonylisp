@@ -5,7 +5,6 @@ import lispAtom from "./lispAtom";
  * Convert given string to list of tokens.
  */
 export function tokenize(str: string): string[] {
-  console.log("Got string: ", str);
   const tokens = [];
   str = str.toString();
   let i = 0;
