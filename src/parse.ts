@@ -1,11 +1,33 @@
 import LispCell, { LispType } from "./LispCell";
-import lispAtom from "./lispAtom";
+
+export type Token = {
+  val: string;
+  offset: number;
+  len: number;
+};
+
+// return true iff given character is '0'..'9'
+function isdig(c: string): boolean {
+  return !!c.match(/\d+/);
+}
+
+// numbers become Numbers; every other token is a Symbol
+export function lispAtom(token: Token) {
+  // console.log("Making atom for " + token);
+  if (
+    isdig(token.val[0]) ||
+    (token.val[0] === "-" && token.val.length > 1 && isdig(token.val[1]))
+  ) {
+    return new LispCell(LispType.Number, token.val);
+  }
+  return new LispCell(LispType.Symbol, token.val);
+}
 
 /**
  * Convert given string to list of tokens.
  */
-export function tokenize(str: string): string[] {
-  const tokens = [];
+export function tokenize(str: string): Token[] {
+  const tokens: Token[] = [];
   str = str.toString();
   let i = 0;
   while (i < str.length) {
@@ -22,12 +44,12 @@ export function tokenize(str: string): string[] {
       continue;
     }
     if (c === "\n") {
-      tokens.push(c);
+      tokens.push({ val: c, offset: i, len: 1 });
       ++i;
       continue;
     }
     if (c === "(" || c === ")") {
-      tokens.push(c);
+      tokens.push({ val: c, offset: i, len: 1 });
       ++i;
       continue;
     }
@@ -43,7 +65,11 @@ export function tokenize(str: string): string[] {
         ++i;
         c = str.charAt(i);
       }
-      tokens.push(str.substring(start, start + count));
+      tokens.push({
+        val: str.substring(start, start + count),
+        offset: start - 1,
+        len: count + 1,
+      });
       ++i;
       continue;
     }
@@ -63,7 +89,11 @@ export function tokenize(str: string): string[] {
     }
     --count;
     --i;
-    tokens.push(str.substring(start, start + count));
+    tokens.push({
+      val: str.substring(start, start + count),
+      offset: start,
+      len: count,
+    });
   }
   return tokens;
 }
@@ -71,37 +101,51 @@ export function tokenize(str: string): string[] {
 /**
  * Returns the Lisp expression in the given tokens.
  */
-export function parseTokens(tokens: string[]): LispCell {
-  let token: string = tokens.shift();
-  while (token == "\n") {
+export function parseTokens(
+  tokens: Token[],
+  replace: (start: number, len: number, val: string) => void
+): LispCell {
+  let token: Token = tokens.shift();
+  while (token.val == "\n") {
     token = tokens.shift();
   }
-  if (token === "(") {
+  if (token.val === "(") {
+    const start = token.offset;
     const c = new LispCell(LispType.List);
     let newLined = false;
-    while (tokens.length > 1 && tokens[0] !== ")") {
-      if (tokens[0] === "\n") {
+    while (tokens.length > 1 && tokens[0].val !== ")") {
+      if (tokens[0].val === "\n") {
         tokens.shift();
         newLined = true;
         continue;
       }
-      const child = parseTokens(tokens);
+      const child = parseTokens(tokens, replace);
       if (newLined) {
         child.newLined = true;
         newLined = false;
       }
       c.list.push(child);
     }
-    tokens.shift();
+    const endToken = tokens.shift();
+    c.setReplace((newVal: string) => {
+      replace(start, endToken.offset + endToken.len - start, newVal);
+    });
     return c;
   } else {
-    return lispAtom(token);
+    const c = lispAtom(token);
+    c.setReplace((newVal: string) => {
+      replace(token.offset, token.len, newVal);
+    });
+    return c;
   }
 }
 
 /**
  * Return the Lisp expression represented by the given string.
  */
-export default function parse(src: string): LispCell {
-  return parseTokens(tokenize("(" + src + ")"));
+export default function parse(
+  src: string,
+  replace?: (start: number, len: number, val: string) => void
+): LispCell {
+  return parseTokens(tokenize("(" + src + ")"), replace);
 }

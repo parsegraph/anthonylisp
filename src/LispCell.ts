@@ -20,6 +20,7 @@ export default class LispCell {
   proc: Function;
   env: LispEnvironment;
   newLined: boolean;
+  _replace: (newVal: string) => void;
 
   constructor(procOrType: LispType | Function, val?: string) {
     this.newLined = false;
@@ -43,6 +44,10 @@ export default class LispCell {
 
     // std::vector<LispCell> list;
     this.list = [];
+  }
+
+  setReplace(replace: (newVal: string) => void) {
+    this._replace = replace;
   }
 
   /**
