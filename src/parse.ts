@@ -127,15 +127,11 @@ export function parseTokens(
       c.list.push(child);
     }
     const endToken = tokens.shift();
-    c.setReplace((newVal: string) => {
-      replace(start, endToken.offset + endToken.len - start, newVal);
-    });
+    c.setReplace(start, endToken.offset + endToken.len - start)
     return c;
   } else {
     const c = lispAtom(token);
-    c.setReplace((newVal: string) => {
-      replace(token.offset, token.len, newVal);
-    });
+    c.setReplace(token.offset, token.len)
     return c;
   }
 }

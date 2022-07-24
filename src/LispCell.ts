@@ -20,7 +20,8 @@ export default class LispCell {
   proc: Function;
   env: LispEnvironment;
   newLined: boolean;
-  _replace: (newVal: string) => void;
+  _offset:number;
+  _len:number;
 
   constructor(procOrType: LispType | Function, val?: string) {
     this.newLined = false;
@@ -44,10 +45,21 @@ export default class LispCell {
 
     // std::vector<LispCell> list;
     this.list = [];
+    this._offset = NaN;
+    this._len = NaN;
   }
 
-  setReplace(replace: (newVal: string) => void) {
-    this._replace = replace;
+  setReplace(offset: number, len: number):void {
+    this._offset = offset;
+    this._len = len;
+  }
+
+  offset() {
+    return this._offset;
+  }
+
+  len() {
+    return this._len;
   }
 
   /**
