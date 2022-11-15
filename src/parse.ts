@@ -33,7 +33,7 @@ export function tokenize(str: string): Token[] {
   while (i < str.length) {
     let c = str.charAt(i);
     if (c === ";") {
-      while (c !== "\n") {
+      while (c !== "\n" && i < str.length) {
         c = str.charAt(++i);
       }
       ++i;
@@ -60,7 +60,7 @@ export function tokenize(str: string): Token[] {
       const start = i;
       let count = 0;
       c = str.charAt(i);
-      while (c != '"') {
+      while (c != '"' && i < str.length) {
         ++count;
         ++i;
         c = str.charAt(i);
