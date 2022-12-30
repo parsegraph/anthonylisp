@@ -102,8 +102,7 @@ export function tokenize(str: string): Token[] {
  * Returns the Lisp expression in the given tokens.
  */
 export function parseTokens(
-  tokens: Token[],
-  replace: (start: number, len: number, val: string) => void
+  tokens: Token[]
 ): LispCell {
   let token: Token = tokens.shift();
   while (token.val == "\n") {
@@ -119,7 +118,7 @@ export function parseTokens(
         newLined = true;
         continue;
       }
-      const child = parseTokens(tokens, replace);
+      const child = parseTokens(tokens)
       if (newLined) {
         child.newLined = true;
         newLined = false;
@@ -140,8 +139,7 @@ export function parseTokens(
  * Return the Lisp expression represented by the given string.
  */
 export default function parse(
-  src: string,
-  replace?: (start: number, len: number, val: string) => void
+  src: string
 ): LispCell {
-  return parseTokens(tokenize("(" + src + ")"), replace);
+  return parseTokens(tokenize("(" + src + ")"))
 }
