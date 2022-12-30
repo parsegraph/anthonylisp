@@ -23,6 +23,10 @@ const hasCSVFiles = ()=>{
   return hasFiles("csv") || hasFiles("tsv") || hasFiles("txt");
 }
 
+const hasPNGFiles = ()=>{
+  return hasFiles("png");
+}
+
 const hasDependency = (dep)=>{
   const info = getPackageJSON();
   return (info.peerDependencies && info.peerDependencies[dep]) ||
@@ -121,6 +125,19 @@ const webpackConfig = (prod)=>{
     });
     extensions.push(".css");
   }
+  if (hasPNGFiles()) {
+    rules.push({
+      test: /\.png/,
+      type: "asset/inline"
+    });
+  }
+  rules.push(
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
+      }
+  );
 
   return {
     externals: buildExternals(),
@@ -138,7 +155,7 @@ const webpackConfig = (prod)=>{
       modules: [relDir("src"), relDir("node_modules")]
     },
     mode: prod ? "production" : "development",
-    devtool: prod ? false : "eval-source-map",
+    devtool: "source-map"
   };
 };
 
